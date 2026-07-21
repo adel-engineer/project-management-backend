@@ -12,3 +12,9 @@ export const TaskStatusEnum = {
 }
 export const AvailableTaskStatues = Object.values(TaskStatusEnum)
 
+
+module.exports = {
+    UserRoleEnum,
+    AvailableUserRole
+}
+
