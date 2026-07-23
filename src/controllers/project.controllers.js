@@ -8,6 +8,7 @@ const {Project} = require("../models/project.model.js")
 const{ProjectMember} = require("../models/projectMember.model.js")
 const mongoose = require("mongoose");
 const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js")
+const { pipeline } = require("nodemailer/lib/xoauth2/index.js")
 
 const createProject = asyncHandler(async (req, res) => {
     const {name, description} = req.body
@@ -40,7 +41,57 @@ const getProjectById = asyncHandler(async (req, res) => {
 });
 
 const getProject = asyncHandler(async (req, res) => {
-    //test
+    const projects = await ProjectMember.aggregate([
+    {
+        $match: {
+        user: new mongoose.Types.ObjectId(req.user._id)
+        }
+    },
+    {
+        $lookup: {
+        from: "projects",
+        localField: "project",
+        foreignField: "_id",
+        as: "project",
+        pipeline: [
+            {
+            $lookup: {
+                from: "projectmembers",
+                localField: "_id",
+                foreignField: "project",
+                as: "projectmembers"
+            }
+            },
+            {
+            $addFields: {
+                members: {
+                $size: "$projectmembers"
+                }
+            }
+            }
+        ]
+        }
+    },
+    {
+        $unwind: "$project"
+    },
+    {
+        $project: {
+        project: {
+            _id: "$project._id",
+            name: "$project.name",
+            description: "$project.description",
+            members: "$project.members",
+            createdAt: "$project.createdAt",
+            createdBy: "$project.createdBy"
+        },
+        role: 1,
+        _id: 0
+        }
+    }
+    ]);
+
+    return res.status(200).json(new apiResponse(200, projects, "projects fetched successfully"))
 });
 
 const updateProject = asyncHandler(async (req, res) => {
