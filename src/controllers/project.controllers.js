@@ -9,6 +9,7 @@ const{ProjectMember} = require("../models/projectMember.model.js")
 const mongoose = require("mongoose");
 const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js")
 const { pipeline } = require("nodemailer/lib/xoauth2/index.js")
+const { param } = require("express-validator")
 
 const createProject = asyncHandler(async (req, res) => {
     const {name, description} = req.body
@@ -37,7 +38,22 @@ const createProject = asyncHandler(async (req, res) => {
 });
 
 const getProjectById = asyncHandler(async (req, res) => {
-    //test
+    const {projectId} = req.params
+    const project = await Project.findById(projectId)
+
+    if(!project){
+         throw new apiError(404,"project not found");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new apiResponse(
+                200,
+                project,
+                "projects fetched successfully"
+            )
+        )
 });
 
 const getProject = asyncHandler(async (req, res) => {
@@ -142,7 +158,39 @@ const deleteProject = asyncHandler(async (req, res) => {
 });
 
 const addMemberToProject = asyncHandler(async (req, res) => {
-    //test
+    const {email, role} = req.body
+    const {projectId} = req.params
+
+    const user = await User.findOne({email})
+    if(!user){
+        throw new apiError(404,"user not found")
+    }
+
+    await ProjectMember.findOneAndUpdate(
+        {
+            user: new mongoose.Types.ObjectId(user._id),
+            project: new mongoose.Types.ObjectId(projectId)
+        },
+        {
+            user: new mongoose.Types.ObjectId(user._id),
+            project: new mongoose.Types.ObjectId(projectId),
+            role: role
+        },
+        {
+            new: true,
+            upsert: true
+        }
+    )
+
+    return res
+        .status(201)
+        .json(
+            new apiResponse(
+                201,
+                [],
+                "New Member has successfuly added"
+            )
+        )
 });
 
 const getProjectMembers = asyncHandler(async (req, res) => {
