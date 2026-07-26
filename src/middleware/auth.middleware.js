@@ -80,4 +80,7 @@ const validateProjectPermission = (roles = []) =>{
         next()
     });
 }
-module.exports = verifyJWT
+module.exports = {
+    verifyJWT,
+    validateProjectPermission
+}

@@ -68,7 +68,7 @@ const userResetForgotPasswordValidator = () => {
     ];
 };
 
-const createProjectValidtor = () => {
+const createProjectValidator = () => {
     return[
         body("name")
             .notEmpty()
@@ -78,7 +78,7 @@ const createProjectValidtor = () => {
     ];
 }
 
-const addMembertoProjectValidtor = () => {
+const addMemberToProjectValidator = () => {
     return[
         body("email")
             .trim()
@@ -103,7 +103,7 @@ module.exports = {
     userChangeCurrentPasswordValidator,
     userForgotPasswordValidator,
     userResetForgotPasswordValidator,
-    createProjectValidtor,
-    addMembertoProjectValidtor
+    createProjectValidator,
+    addMemberToProjectValidator
 
 };
