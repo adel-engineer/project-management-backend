@@ -1,5 +1,5 @@
 const {body} = require("express-validator");
-
+const {AvailableUserRole} = require("../utils/constants.js")
 const userRegisterValidator  = () => {
     return[
     body("email")
@@ -68,11 +68,42 @@ const userResetForgotPasswordValidator = () => {
     ];
 };
 
+const createProjectValidtor = () => {
+    return[
+        body("name")
+            .notEmpty()
+            .withMessage("Nmae is required"),
+        body("description")
+            .optional(),
+    ];
+}
+
+const addMembertoProjectValidtor = () => {
+    return[
+        body("email")
+            .trim()
+            .notEmpty()
+            .withMessage("email is required")
+            .isEmail
+            .withMessage("email is invalid"),
+        body("role")
+            .notEmpty()
+            .withMessage("Role is Required")
+            .isIn(AvailableUserRole
+            .withMessage("Role is invaild")
+            )
+        
+    ]
+}
+
 
 module.exports = {
     userRegisterValidator,
     userLoginValidator,
     userChangeCurrentPasswordValidator,
     userForgotPasswordValidator,
-    userResetForgotPasswordValidator
+    userResetForgotPasswordValidator,
+    createProjectValidtor,
+    addMembertoProjectValidtor
+
 };
