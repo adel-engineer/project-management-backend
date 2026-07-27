@@ -21,7 +21,9 @@ const {
     userChangeCurrentPasswordValidator,
     userForgotPasswordValidator,
     userResetForgotPasswordValidator
-} = require("../validators/index.js");const verifyJWT = require("../middleware/auth.middleware.js")
+} = require("../validators/index.js");
+
+const {verifyJWT} = require("../middleware/auth.middleware.js");
 
 
 //Unsecured Routes

@@ -14,7 +14,7 @@ const projectSchema = new Schema(
             type: String
         },
         createdBy:{
-            type: Schema.Types.objectId,
+            type: Schema.Types.ObjectId,
             ref: "User",
             required: true
         }

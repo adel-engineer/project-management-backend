@@ -84,14 +84,14 @@ const addMemberToProjectValidator = () => {
             .trim()
             .notEmpty()
             .withMessage("email is required")
-            .isEmail
+            .isEmail()
             .withMessage("email is invalid"),
         body("role")
             .notEmpty()
             .withMessage("Role is Required")
-            .isIn(AvailableUserRole
+            .isIn(AvailableUserRole)
             .withMessage("Role is invaild")
-            )
+            
         
     ]
 }

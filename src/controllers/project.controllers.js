@@ -201,7 +201,7 @@ const getProjectMembers = asyncHandler(async (req, res) => {
         throw new apiError(404, "the project not found")
     }
 
-    const project = await ProjectMember.aggregate([
+    const projectMembers = await ProjectMember.aggregate([
         {
             $match:{
                project: new mongoose.Types.ObjectId(projectId)
@@ -242,7 +242,7 @@ const getProjectMembers = asyncHandler(async (req, res) => {
         }
     ])
 
-    return res.status(200).json(new apiResponse(200, ProjectMember, "project member fetched"))
+    return res.status(200).json(new apiResponse(200, projectMembers, "project member fetched"))
 });
 
 const updateMemberRole = asyncHandler(async (req, res) => {

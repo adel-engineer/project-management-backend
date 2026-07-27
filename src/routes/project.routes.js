@@ -1,7 +1,12 @@
-const express = require("express")
-const route = express.Router()
-const {
+const express = require("express");
+const router = express.Router();
 
+const {
+    verifyJWT,
+    validateProjectPermission
+} = require("../middleware/auth.middleware.js");
+
+const {
     getProject,
     getProjectById,
     createProject,
@@ -11,18 +16,54 @@ const {
     getProjectMembers,
     updateMemberRole,
     deleteMember
-
 } = require("../controllers/project.controllers.js");
 
-const validate = require("../middleware/validator.middleware.js")
+const validate = require("../middleware/validator.middleware.js");
+
 const {
     createProjectValidator,
     addMemberToProjectValidator
-} = require("../validators/index.js");
+} = require("../validators");
+const { AvailableUserRole, UserRoleEnum } = require("../utils/constants.js");
+//to auth
+router.use(verifyJWT)
 
-const {
-      verifyJWT,
-      validateProjectPermission
-    } = require("../middleware/auth.middleware.js")
 
-module.exports = route
+router
+    .route("/")
+    .get(getProject)
+    .post(createProjectValidator(), validate, createProject);
+
+router
+    .route("/:projectId")
+    .get(validateProjectPermission(AvailableUserRole), getProjectById)
+    .put(
+        validateProjectPermission([UserRoleEnum.ADMIN]),
+        createProjectValidator(),
+        validate,
+        updateProject
+    )
+    .delete(
+        validateProjectPermission([UserRoleEnum.ADMIN]),
+        deleteProject
+    )
+
+
+router
+    .route("/:projectId/members")
+    .get(getProjectMembers)
+    .post(
+        validateProjectPermission([UserRoleEnum.ADMIN]),
+        addMemberToProjectValidator(),
+        validate,
+        addMemberToProject
+    )
+
+router
+    .route("/:projectId/members/:userId")
+    .put(
+        validateProjectPermission([UserRoleEnum.ADMIN]),
+        updateMemberRole)
+    .delete(validateProjectPermission([UserRoleEnum.ADMIN]), deleteMember);
+
+module.exports = router;

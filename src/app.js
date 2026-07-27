@@ -22,10 +22,13 @@ app.use(cookieParser());
 
 //import routs
 const HealthCheck = require("../src/routes/HealthCheck.routes.js")
-app.use("/api/v1/healthcheck", HealthCheck)
+app.use("/api/v1/healthcheck", HealthCheck);
 
-const authRouter = require("../src/routes/auth.routes.js")
-app.use("/api/v1/auth", authRouter)
+const authRouter = require("../src/routes/auth.routes.js");
+app.use("/api/v1/auth", authRouter);
+
+const ProjectRouter = require("../src/routes/project.routes.js");
+app.use("/api/v1/Projects", ProjectRouter);
 
 
 
