@@ -5,7 +5,7 @@ const ApiError = require("../utils/api-error.js")
 const User = require("../models/user.model.js")
 
 const {Project} = require("../models/project.model.js")
-const{ProjectMember} = require("../models/projectMember.model.js")
+const ProjectMember = require("../models/projectMember.model.js")
 const mongoose = require("mongoose");
 const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js")
 const { pipeline } = require("nodemailer/lib/xoauth2/index.js")
@@ -17,7 +17,7 @@ const createProject = asyncHandler(async (req, res) => {
     const project = await Project.create({
         name,
         description,
-        createdBy: new mongoose.types.ObjectId(req.user._id)
+        createdBy: new mongoose.Types.ObjectId(req.user._id)
     });
 
     await ProjectMember.create({
@@ -195,7 +195,7 @@ const addMemberToProject = asyncHandler(async (req, res) => {
 
 const getProjectMembers = asyncHandler(async (req, res) => {
     const {projectId} = req.params
-    const project = await Project.findById(req.params)
+    const project = await Project.findById(projectId)
 
     if(!project){
         throw new apiError(404, "the project not found")
