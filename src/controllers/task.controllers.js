@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js");
 const { pipeline } = require("nodemailer/lib/xoauth2/index.js");
 const ApiError = require("../utils/api-error.js");
+const ProjectMember = require("../models/projectmember.model.js");
 
 
 
@@ -147,7 +148,60 @@ const getTaskById = asyncHandler(async(req, res) => {
 });
 
 const updateTask = asyncHandler(async(req, res) => {
-    //test
+    const {taskId} = req.params
+    const {title, description, assignedTo, status} = req.body
+
+    let task = await Task.findOne({
+        _id: new mongoose.Types.ObjectId(taskId),
+    })
+    
+    if(!task){
+        throw new apiError(404,"task not exict")
+    }
+
+    let projectmember = await ProjectMember.findOne({
+        user: new mongoose.Types.ObjectId(assignedTo),
+        project: new mongoose.Types.ObjectId(task.project)
+    })
+
+    if(!projectmember){
+        throw new apiError(404, "the member is not allowed")
+    }
+
+    if(status){
+        if(!AvailableTaskStatues.includes(status)){
+            throw new apiError(400, "Status is wrong")
+        }
+    }
+    const updateTask = {}
+
+    if(title){
+        updateTask.title = title
+    }
+    if(description){
+        updateTask.description = description
+    }
+    if(assignedTo){
+        updateTask.assignedTo = assignedTo
+    }
+    if(status){
+        updateTask.status = status
+    }
+
+    const update = await Task.findByIdAndUpdate(
+        task._id,
+        updateTask,
+        {
+            new: true
+        }
+    )
+
+    if(!update){
+        throw new apiError(400,"tast not update")
+    }
+
+    return res.status(200).json(new apiResponse(200,update, "Task Updated successfully"))
+    
 });
 
 const deleteTask = asyncHandler(async(req, res) => {
