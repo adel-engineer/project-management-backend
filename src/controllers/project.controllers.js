@@ -284,7 +284,7 @@ const deleteMember = asyncHandler(async (req, res) => {
         user: new mongoose.Types.ObjectId(userId)
     })
     if(!projectmember){
-        throw new apiError(400, "Project Member not Found")
+        throw new apiError(404, "Project Member not Found")
     }
     const projectMember = await ProjectMember.findByIdAndDelete(
         projectmember._id)
