@@ -7,6 +7,8 @@ const apiError = require("../utils/api-error.js");
 const asyncHandler = require("../utils/asyncHandler.js");
 const mongoose = require("mongoose");
 const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js");
+const { pipeline } = require("nodemailer/lib/xoauth2/index.js");
+const ApiError = require("../utils/api-error.js");
 
 
 
@@ -31,8 +33,8 @@ const getTasks = asyncHandler(async(req, res) => {
 });
 
 const creatTask = asyncHandler(async(req, res) => {
-    const {title, description, assignedTo, status} = req.body;
-    const {projectId} = req.params;
+   const {title, description, assignedTo, status} = req.body;
+   const {projectId} = req.params;
 
    const project = await Project.findById(projectId);
 
@@ -67,7 +69,81 @@ const creatTask = asyncHandler(async(req, res) => {
 });
 
 const getTaskById = asyncHandler(async(req, res) => {
-    //test
+    const {taskId} = req.params;
+
+    const task = await Task.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(taskId)
+            }
+        },
+        {
+            $lookup: {
+                from:"users",
+                localField: "assignedTo",
+                foreignField: "_id",
+                as: "assignedTo",
+                pipeline: [
+                   {
+                     _id: 1,
+                     username: 1,
+                     fullname:1,
+                     avater: 1
+                   }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from:"subtasks",
+                localField: "_id",
+                foreignField: "task",
+                as: "subtasks",
+                pipeline: [
+                    {
+                      $lookup: {
+                         from:"users",
+                         localField: "ceatedBy",
+                         foreignField: "_id",
+                         as: "ceatedBy",
+                         pipeline: [
+                            {
+                                $project: {
+                                    _id: 1,
+                                    username: 1,
+                                    fullName: 1,
+                                    avater: 1
+                                }
+                            }
+                         ]
+
+                        }
+                    },
+                    {
+                        $addFields: {
+                            createdBy: {
+                                $arrayElemAt: ["$createBy", 0]
+                            }
+                        }
+                    }
+                ],
+            },
+        },
+        {
+            $addFields: {
+                assignedTo: {
+                    $arrayElemAt: ["assignedTo", 0]
+                }
+            }
+        }
+    ]);
+
+    if(!task || task.length === 0){
+        throw new ApiError(404, "task not found")
+    }
+
+    return res.status(200).json(new apiResponse(200, task[0], "task fetched successfully"))
+
 });
 
 const updateTask = asyncHandler(async(req, res) => {
