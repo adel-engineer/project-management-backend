@@ -226,7 +226,29 @@ const deleteTask = asyncHandler(async(req, res) => {
 });
 
 const createSubTask = asyncHandler(async(req, res) => {
+    const {projectId, taskId} = req.params
+    const {title} = req.body
 
+    let task = await Task.findOne({
+        _id: new mongoose.Types.ObjectId(taskId),
+        project: new mongoose.Types.ObjectId(projectId)
+    });
+
+    if(!task){
+        throw new apiError(404, "task not Found")
+    };
+
+    const subtask = await SubTask.create({
+        title,
+        task: new mongoose.Types.ObjectId(task._id),
+        createdBy: new mongoose.Types.ObjectId(req.user._id)
+    })
+
+    return res
+     .status(201)
+     .json(
+        new apiResponse(201, subtask, "Subtask created successfully")
+    )
 });
 
 const updateSubTask = asyncHandler(async(req, res) => {
