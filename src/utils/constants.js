@@ -15,6 +15,8 @@ const AvailableTaskStatues = Object.values(TaskStatusEnum)
 
 module.exports = {
     UserRoleEnum,
-    AvailableUserRole
+    AvailableUserRole,
+    TaskStatusEnum,
+    AvailableTaskStatues
 }
 
