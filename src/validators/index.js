@@ -120,6 +120,32 @@ const creatTaskValidator = () => {
             .withMessage("AssignedTo must be a valid MongoDB ObjectId")    ]
 };
 
+const createSubTaskValidator = () => {
+    return[
+     body("title")
+        .notEmpty()
+        .withMessage("title is required")
+        .isString()
+        .withMessage("Title must be a string")
+    ]
+};
+
+
+const updateSubTaskValidator = () => {
+    return[
+    body("title")
+        .optional()
+        .isString()
+        .withMessage("Title must be a string"),
+  
+    body("isCompleted")
+        .optional()
+        .isBoolean()
+        .withMessage("isCompleted must be a boolean")
+
+    ]
+};
+
 module.exports = {
     userRegisterValidator,
     userLoginValidator,
