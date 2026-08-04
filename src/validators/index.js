@@ -1,5 +1,5 @@
 const {body} = require("express-validator");
-const {AvailableUserRole} = require("../utils/constants.js")
+const {AvailableUserRole, AvailableTaskStatues} = require("../utils/constants.js")
 const userRegisterValidator  = () => {
     return[
     body("email")
@@ -94,8 +94,31 @@ const addMemberToProjectValidator = () => {
             
         
     ]
-}
+};
 
+const creatTaskValidator = () => {
+    return[
+        body("title")
+            .trim()
+            .notEmpty()
+            .withMessage("title is required")
+            .isString()
+            .withMessage("Title must be a string"),
+        body("status")
+            .notEmpty()
+            .withMessage("status is required")
+            .isIn(AvailableTaskStatues)
+            .withMessage("Status is invalid"),
+        body("description")
+            .optional()
+            .isString()
+            .withMessage("description must be string"),
+        body("assignedTo")
+            .notEmpty()
+            .withMessage("AssignedTo is required")
+            .isMongoId()
+            .withMessage("AssignedTo must be a valid MongoDB ObjectId")    ]
+};
 
 module.exports = {
     userRegisterValidator,
@@ -104,6 +127,6 @@ module.exports = {
     userForgotPasswordValidator,
     userResetForgotPasswordValidator,
     createProjectValidator,
-    addMemberToProjectValidator
-
+    addMemberToProjectValidator,
+    creatTaskValidator
 };
