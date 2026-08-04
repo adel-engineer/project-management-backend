@@ -216,13 +216,13 @@ const deleteTask = asyncHandler(async(req, res) => {
       throw new apiError(404, "Task not Found")
     }
     
-    const deleted = await Task.findByIdAndDelete(task._id)
+    const deleteTask = await Task.findByIdAndDelete(task._id)
 
-    if(!deleted){
+    if(!deleteTask){
         throw new apiError(400,"Task not deleted")
     }
 
-    return res.status(200).json(new apiResponse(200, deleted, "Task Deleted successfully"))
+    return res.status(200).json(new apiResponse(200, deleteTask, "Task Deleted successfully"))
 });
 
 const createSubTask = asyncHandler(async(req, res) => {
@@ -292,7 +292,29 @@ const updateSubTask = asyncHandler(async(req, res) => {
 });
 
 const deleteSubTask = asyncHandler(async(req, res) => {
-    //test
+    const { projectId, subTaskId } = req.params;
+
+    const subtask = await SubTask.findById(subTaskId)
+    if(!subtask){
+        throw new apiError(404, "subtask not found")
+    }
+
+    const task = await Task.findById(subtask.task)
+    if(!task){
+        throw new apiError(404, "task not found")
+    }
+
+    if(task.project.toString() !== projectId){
+        throw new apiError(404, "SubTask does not belong to this project")
+    }
+
+    const deletedSubTask = await SubTask.findByIdAndDelete(subTaskId)
+    if(!deletedSubTask){
+        throw new apiError(400, "sub task does not deleted")
+    }
+
+    return res.status(200).json(new apiResponse(200, deletedSubTask, "Subtask Deleted successfully"))
+
 });
 
 module.exports = {
