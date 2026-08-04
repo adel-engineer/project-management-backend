@@ -154,7 +154,7 @@ const updateTask = asyncHandler(async(req, res) => {
     let task = await Task.findOne({
         _id: new mongoose.Types.ObjectId(taskId),
     })
-    
+ 
     if(!task){
         throw new apiError(404,"task not exict")
     }
@@ -252,7 +252,43 @@ const createSubTask = asyncHandler(async(req, res) => {
 });
 
 const updateSubTask = asyncHandler(async(req, res) => {
-    //test
+    const { projectId, subTaskId } = req.params;
+    const {title, isCompleted} = req.body
+
+    const subtask = await SubTask.findById(subTaskId)
+    if(!subtask){
+        throw new apiError(404, "subtask not found")
+    }
+
+    const task = await Task.findById(subtask.task)
+    if(!task){
+        throw new apiError(404, "task not found")
+    }
+
+    if(task.project.toString() !== projectId){
+        throw new apiError(404, "SubTask does not belong to this project")
+    }
+
+    const updateSubTaskData  = {}
+
+    if(title){
+        updateSubTaskData .title = title
+    }
+
+    if(isCompleted !== undefined){
+        updateSubTaskData .isCompleted = isCompleted
+    }
+
+    const update = await SubTask.findByIdAndUpdate(
+        subTaskId,
+        updateSubTaskData,
+        {
+            new: true
+        }
+    )
+
+    return res.status(200).json(new apiResponse(200,update, "subtask Updated successfully"))
+
 });
 
 const deleteSubTask = asyncHandler(async(req, res) => {
