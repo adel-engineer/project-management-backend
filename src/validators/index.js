@@ -1,5 +1,11 @@
 const {body} = require("express-validator");
-const {AvailableUserRole, AvailableTaskStatues} = require("../utils/constants.js")
+const {
+    UserRoleEnum,
+    AvailableUserRole,
+    TaskStatusEnum,
+    AvailableTaskStatues
+}
+= require("../utils/constants.js")
 const userRegisterValidator  = () => {
     return[
     body("email")
@@ -130,7 +136,6 @@ const createSubTaskValidator = () => {
     ]
 };
 
-
 const updateSubTaskValidator = () => {
     return[
     body("title")
@@ -154,5 +159,7 @@ module.exports = {
     userResetForgotPasswordValidator,
     createProjectValidator,
     addMemberToProjectValidator,
-    creatTaskValidator
+    creatTaskValidator,
+    createSubTaskValidator,
+    updateSubTaskValidator
 };
