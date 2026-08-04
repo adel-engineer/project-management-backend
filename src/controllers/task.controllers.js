@@ -85,14 +85,17 @@ const getTaskById = asyncHandler(async(req, res) => {
                 foreignField: "_id",
                 as: "assignedTo",
                 pipeline: [
-                   {
-                     _id: 1,
-                     username: 1,
-                     fullname:1,
-                     avater: 1
-                   }
+                    {
+                        $project:{
+                             _id: 1,
+                              username: 1,
+                              fullName:1,
+                              avatar: 1
+                        }
+                    }
                 ]
             }
+        
         },
         {
             $lookup: {
@@ -104,9 +107,9 @@ const getTaskById = asyncHandler(async(req, res) => {
                     {
                       $lookup: {
                          from:"users",
-                         localField: "ceatedBy",
+                         localField: "createdBy",
                          foreignField: "_id",
-                         as: "ceatedBy",
+                         as: "createdBy",
                          pipeline: [
                             {
                                 $project: {
@@ -123,7 +126,7 @@ const getTaskById = asyncHandler(async(req, res) => {
                     {
                         $addFields: {
                             createdBy: {
-                                $arrayElemAt: ["$createBy", 0]
+                                $arrayElemAt: ["$createdBy", 0]
                             }
                         }
                     }
@@ -133,7 +136,7 @@ const getTaskById = asyncHandler(async(req, res) => {
         {
             $addFields: {
                 assignedTo: {
-                    $arrayElemAt: ["assignedTo", 0]
+                    $arrayElemAt: ["$assignedTo", 0]
                 }
             }
         }
@@ -325,5 +328,5 @@ module.exports = {
     deleteTask,
     createSubTask,
     updateSubTask,
-    deleteSubTask
+    deleteSubTask,
 }
