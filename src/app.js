@@ -30,6 +30,9 @@ app.use("/api/v1/auth", authRouter);
 const ProjectRouter = require("../src/routes/project.routes.js");
 app.use("/api/v1/Projects", ProjectRouter);
 
+const TaskRouter = require("../src/routes/task.routes.js");
+app.use("/api/v1/tasks", TaskRouter);
+
 
 
 
