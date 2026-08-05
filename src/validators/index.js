@@ -151,6 +151,17 @@ const updateSubTaskValidator = () => {
     ]
 };
 
+const createNotesValidator = () => {
+    return [
+        body("content")
+            .trim()
+            .notEmpty()
+            .withMessage("Content is required")
+            .isString()
+            .withMessage("Content must be a string")
+    ];
+};
+
 module.exports = {
     userRegisterValidator,
     userLoginValidator,
