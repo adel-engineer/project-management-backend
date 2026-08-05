@@ -33,6 +33,9 @@ app.use("/api/v1/Projects", ProjectRouter);
 const TaskRouter = require("../src/routes/task.routes.js");
 app.use("/api/v1/tasks", TaskRouter);
 
+const NoteRouter = require("../src/routes/note.routes.js");
+app.use("/api/v1/notes", NoteRouter);
+
 
 
 
