@@ -328,5 +328,5 @@ module.exports = {
     deleteTask,
     createSubTask,
     updateSubTask,
-    deleteSubTask,
+    deleteSubTask
 }
