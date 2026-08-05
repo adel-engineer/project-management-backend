@@ -123,3 +123,11 @@ const deleteNotes = asyncHandler(async(req, res) => {
 
     return res.status(200).json(new apiResponse(200, deleteNote, "Note Deleted successfully"))
 });
+
+module.exports = {
+    getNotes,
+    createNotes,
+    getNotesById,
+    updateNotes,
+    deleteNotes
+}

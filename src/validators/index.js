@@ -181,5 +181,7 @@ module.exports = {
     addMemberToProjectValidator,
     creatTaskValidator,
     createSubTaskValidator,
-    updateSubTaskValidator
+    updateSubTaskValidator,
+    createNotesValidator,
+    updateNotesValidator
 };
