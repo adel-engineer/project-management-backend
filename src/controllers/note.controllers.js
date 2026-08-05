@@ -56,7 +56,22 @@ const createNotes = asyncHandler(async(req, res) => {
 });
 
 const getNotesById = asyncHandler(async(req, res) => {
-    //test
+    const {projectId, noteId} = req.params;
+
+    const notes = await ProjectNote.findOne({
+        _id: new mongoose.Types.ObjectId(noteId),
+        project: projectId
+    }).populate("createdBy", "username fullName avatar");
+
+    if(!notes){
+        throw new apiError(404, "note not found")
+    }
+
+    return res
+      .status(200)
+      .json(
+         new apiResponse(200, notes, "notes featched successfully")
+    )
 });
 
 const updateNotes = asyncHandler(async(req, res) => {
