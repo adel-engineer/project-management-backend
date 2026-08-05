@@ -162,6 +162,15 @@ const createNotesValidator = () => {
     ];
 };
 
+const updateNotesValidator = () => {
+    return [
+        body("content")
+            .optional()
+            .isString()
+            .withMessage("Content must be a string")
+    ];
+};
+
 module.exports = {
     userRegisterValidator,
     userLoginValidator,
