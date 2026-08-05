@@ -28,7 +28,7 @@ const getTasks = asyncHandler(async(req, res) => {
     return res
      .status(201)
      .json(
-         new apiResponse(201, tasks, "Task fetched successfully")
+         new apiResponse(200, tasks, "Task fetched successfully")
      )
 
 });

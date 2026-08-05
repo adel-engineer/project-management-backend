@@ -13,7 +13,23 @@ const ProjectMember = require("../models/projectmember.model.js");
 
 
 const getNotes = asyncHandler(async(req, res) => {
-    //test
+    const {projectId} = req.params;
+    const project = await Project.findById(projectId)
+
+    if(!project){
+        throw new apiError(404, "project not found")
+    }
+
+    const notes = await ProjectNote.find({
+         project: new mongoose.Types.ObjectId(projectId),
+    }).populate("createdBy", "username fullName avatar");
+
+    return res
+     .status(201)
+     .json(
+         new apiResponse(200, notes, "Note fetched successfully")
+     )
+
 });
 
 const createNotes = asyncHandler(async(req, res) => {
