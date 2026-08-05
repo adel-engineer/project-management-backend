@@ -1,16 +1,11 @@
-const User = require("../models/user.model.js");
-const {Project} = require("../models/project.model.js");
-const {Task} = require("../models/task.model.js");
-const {SubTask} = require("../models/subtask.model.js");
-const {ProjectNote} = require("../models/notes.model.js")
+const { Project } = require("../models/project.model.js");
+const { ProjectNote } = require("../models/notes.model.js");
+
 const apiResponse = require("../utils/api-response.js");
 const apiError = require("../utils/api-error.js");
 const asyncHandler = require("../utils/asyncHandler.js");
-const mongoose = require("mongoose");
-const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js");
-const { pipeline } = require("nodemailer/lib/xoauth2/index.js");
-const ProjectMember = require("../models/projectmember.model.js");
 
+const mongoose = require("mongoose");
 
 const getNotes = asyncHandler(async(req, res) => {
     const {projectId} = req.params;
@@ -25,7 +20,7 @@ const getNotes = asyncHandler(async(req, res) => {
     }).populate("createdBy", "username fullName avatar");
 
     return res
-     .status(201)
+     .status(200)
      .json(
          new apiResponse(200, notes, "Note fetched successfully")
      )
@@ -70,7 +65,7 @@ const getNotesById = asyncHandler(async(req, res) => {
     return res
       .status(200)
       .json(
-         new apiResponse(200, notes, "notes featched successfully")
+         new apiResponse(200, notes, "Note fetched successfully")
     )
 });
 
@@ -117,13 +112,13 @@ const deleteNotes = asyncHandler(async(req, res) => {
     });
 
     if(!note){
-       throw new apiError(400,"note not found")
+       throw new apiError(404,"note not found")
     }
 
     const deleteNote = await ProjectNote.findByIdAndDelete(noteId)
 
     if(!deleteNote){
-        throw new apiError(400, "delete note does not deleted")
+        throw new apiError(400, "Failed to delete note")
     }
 
     return res.status(200).json(new apiResponse(200, deleteNote, "Note Deleted successfully"))
