@@ -75,7 +75,37 @@ const getNotesById = asyncHandler(async(req, res) => {
 });
 
 const updateNotes = asyncHandler(async(req, res) => {
-    //test
+    const {projectId, noteId} = req.params;
+    const {content} = req.body;
+
+    const notes = await ProjectNote.findOne({
+        _id: new mongoose.Types.ObjectId(noteId),
+        project: projectId
+    });
+
+    if(!notes){
+        throw new apiError(404, "note not found")
+    }
+
+    const updateData  = {}
+
+    if(content){
+        updateData .content = content
+    }
+
+    const update = await ProjectNote.findByIdAndUpdate(
+        noteId,
+        updateData ,
+        {
+                new: true
+        }
+    )
+
+    if(!update){
+        throw new apiError(400,"note not update")
+    }
+
+    return res.status(200).json(new apiResponse(200,update, "note Updated successfully"))
 });
 
 const deleteNotes = asyncHandler(async(req, res) => {
