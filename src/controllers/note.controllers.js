@@ -109,5 +109,22 @@ const updateNotes = asyncHandler(async(req, res) => {
 });
 
 const deleteNotes = asyncHandler(async(req, res) => {
-    //test
+    const{projectId, noteId} = req.params;
+
+    const note = await ProjectNote.findOne({
+        _id: new mongoose.Types.ObjectId(noteId),
+        project: projectId
+    });
+
+    if(!note){
+       throw new apiError(400,"note not found")
+    }
+
+    const deleteNote = await ProjectNote.findByIdAndDelete(noteId)
+
+    if(!deleteNote){
+        throw new apiError(400, "delete note does not deleted")
+    }
+
+    return res.status(200).json(new apiResponse(200, deleteNote, "Note Deleted successfully"))
 });
