@@ -479,3 +479,198 @@ http://localhost:3000/api/v1
 
 All protected routes require a valid JWT Access Token.
 
+
+---
+
+# API Modules
+
+The API is organized into multiple modules, each responsible for a specific feature of the system.
+
+## Authentication
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/users/register` | Register a new user |
+| POST | `/users/login` | Authenticate user |
+| POST | `/users/logout` | Logout current user |
+| POST | `/users/refresh-token` | Generate a new access token |
+| GET | `/users/verify-email/:token` | Verify email address |
+| POST | `/users/resend-email-verification` | Resend verification email |
+| POST | `/users/forgot-password` | Send password reset email |
+| POST | `/users/reset-password/:token` | Reset password |
+| POST | `/users/change-password` | Change current password |
+| GET | `/users/current-user` | Retrieve current authenticated user |
+
+---
+
+## Project Management
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/projects` | Create a new project |
+| GET | `/projects` | Retrieve all projects |
+| GET | `/projects/:projectId` | Retrieve project details |
+| PUT | `/projects/:projectId` | Update project |
+| DELETE | `/projects/:projectId` | Delete project |
+
+---
+
+## Project Members
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/projects/:projectId/members` | Add project member |
+| GET | `/projects/:projectId/members` | Retrieve project members |
+| PUT | `/projects/:projectId/members/:memberId` | Update member role |
+| DELETE | `/projects/:projectId/members/:memberId` | Remove project member |
+
+---
+
+## Tasks
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/tasks/:projectId` | Create task |
+| GET | `/tasks/:projectId` | Retrieve project tasks |
+| GET | `/tasks/:projectId/t/:taskId` | Retrieve task details |
+| PUT | `/tasks/:projectId/t/:taskId` | Update task |
+| DELETE | `/tasks/:projectId/t/:taskId` | Delete task |
+
+---
+
+## SubTasks
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/tasks/:projectId/t/:taskId/subtasks` | Create subtask |
+| PUT | `/tasks/:projectId/st/:subTaskId` | Update subtask |
+| DELETE | `/tasks/:projectId/st/:subTaskId` | Delete subtask |
+
+---
+
+## Project Notes
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/notes/:projectId` | Create project note |
+| GET | `/notes/:projectId` | Retrieve all project notes |
+| GET | `/notes/:projectId/n/:noteId` | Retrieve note details |
+| PUT | `/notes/:projectId/n/:noteId` | Update project note |
+| DELETE | `/notes/:projectId/n/:noteId` | Delete project note |
+
+---
+
+# API Testing
+
+The API can be tested using the included Postman Collection.
+
+Import the provided collection into Postman and configure your environment variables before sending requests.
+
+---
+
+# Authentication
+
+Protected endpoints require an Access Token.
+
+Example header:
+
+```http
+Authorization: Bearer <your_access_token>
+```
+
+---
+
+# Email Service
+
+The application integrates email functionality using:
+
+- Nodemailer
+- Mailgen
+- Mailtrap SMTP
+
+Supported email workflows:
+
+- Email Verification
+- Password Reset
+- Verification Email Resend
+
+---
+
+# File Uploads
+
+The application supports multipart file uploads using Multer.
+
+Supported uploads include:
+
+- User Avatar
+- Task Attachments
+
+Uploaded files are stored inside the `public/images` directory.
+
+---
+
+# Error Handling
+
+The project uses centralized error handling to provide consistent API responses.
+
+Example:
+
+```json
+{
+    "statusCode": 404,
+    "message": "Project not found",
+    "success": false
+}
+```
+
+---
+
+# API Response Format
+
+Successful responses follow a consistent structure.
+
+```json
+{
+    "statusCode": 200,
+    "data": {},
+    "message": "Success",
+    "success": true
+}
+```
+
+Error responses:
+
+```json
+{
+    "statusCode": 400,
+    "message": "Validation failed",
+    "success": false
+}
+```
+
+---
+
+# Security Features
+
+The application implements several security mechanisms:
+
+- JWT Authentication
+- Refresh Token Strategy
+- Password Hashing with bcrypt
+- Role-Based Access Control (RBAC)
+- Request Validation
+- Protected Routes
+- Environment Variable Configuration
+
+---
+
+# MongoDB Features
+
+The project utilizes several MongoDB capabilities including:
+
+- Aggregation Pipelines
+- Populate Relationships
+- Schema Validation
+- ObjectId References
+- Timestamp Support
+- Document Relationships
