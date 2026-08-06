@@ -674,3 +674,164 @@ The project utilizes several MongoDB capabilities including:
 - ObjectId References
 - Timestamp Support
 - Document Relationships
+
+---
+
+# Design Decisions
+
+This project was designed with scalability, maintainability, and clean architecture in mind.
+
+### Why Node.js?
+
+Node.js provides an event-driven, non-blocking architecture that is well suited for RESTful APIs and real-time applications.
+
+### Why Express.js?
+
+Express offers a lightweight and flexible framework for building scalable backend services with reusable middleware.
+
+### Why MongoDB?
+
+MongoDB was selected because it naturally models project-based relationships while providing excellent flexibility for evolving business requirements.
+
+### Why Mongoose?
+
+Mongoose simplifies schema management, validation, document relationships, and database interactions.
+
+### Why JWT Authentication?
+
+JWT enables stateless authentication, making the API scalable and easy to integrate with web and mobile applications.
+
+### Why Role-Based Access Control (RBAC)?
+
+RBAC ensures that users only have access to resources permitted by their assigned project role.
+
+### Why Aggregation Pipeline?
+
+MongoDB Aggregation Pipelines were used to efficiently retrieve task details together with assigned users and subtasks in a single database query.
+
+### Why Populate?
+
+Populate was used where simple document references were sufficient, improving code readability while avoiding unnecessary aggregation complexity.
+
+---
+
+# Development Practices
+
+The project follows several software engineering principles:
+
+- Modular MVC Architecture
+- Separation of Concerns
+- Reusable Middleware
+- Centralized Error Handling
+- Request Validation
+- RESTful API Design
+- Consistent API Responses
+- Clean Code Principles
+
+---
+
+# Future Improvements
+
+The following features are planned for future releases:
+
+- Docker Support
+- Redis Caching
+- Swagger / OpenAPI Documentation
+- Unit Testing
+- Integration Testing
+- AWS Deployment
+- CI/CD Pipeline
+- TypeScript Migration
+- Background Jobs
+- Notification System
+- Audit Logs
+- Activity Timeline
+- Search & Filtering
+- Pagination
+- Performance Optimization
+
+---
+
+# Postman Collection
+
+A complete Postman Collection is included for testing all API endpoints.
+
+The collection covers:
+
+- Authentication
+- User Management
+- Projects
+- Project Members
+- Tasks
+- SubTasks
+- Project Notes
+
+Import the collection into Postman and configure your environment variables before testing the API.
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+If you would like to improve this project:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push your branch.
+5. Open a Pull Request.
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+---
+
+# Author
+
+**Adel**
+
+Software Engineering Student
+
+GitHub:
+https://github.com/adel-engineer
+
+---
+
+# Acknowledgements
+
+This project was developed as part of my backend learning journey to strengthen my understanding of modern backend development using Node.js, Express.js, MongoDB, and RESTful API design principles.
+
+The goal was not only to build a functional application but also to follow professional software engineering practices such as modular architecture, authentication, authorization, validation, and maintainable code organization.
+
+---
+
+# Project Status
+
+Current Version
+
+**v1.3.0**
+
+Status
+
+**Stable**
+
+Modules Completed
+
+- Authentication System
+- Project Management
+- Project Members
+- Task Management
+- SubTask Management
+- Project Notes
+
+Next Planned Improvements
+
+- Docker
+- Testing
+- AWS Deployment
+- TypeScript
+- Redis
