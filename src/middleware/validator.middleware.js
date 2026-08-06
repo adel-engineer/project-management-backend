@@ -16,7 +16,7 @@ const ApiError = require("../utils/api-error.js")
     
     );
 
-    throw new ApiError(422,"Recived data is no valid",extractedErrors)
+    throw new ApiError(422,"Received data is not valid",extractedErrors)
 };
 
 module.exports = validate;
