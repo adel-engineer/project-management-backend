@@ -22,9 +22,7 @@ const {creatTaskValidator, createSubTaskValidator, updateSubTaskValidator} = req
 
 const {
     UserRoleEnum,
-    AvailableUserRole,
-    TaskStatusEnum,
-    AvailableTaskStatues
+    AvailableUserRole
 }
 = require("../utils/constants.js")//to auth
 router.use(verifyJWT)
