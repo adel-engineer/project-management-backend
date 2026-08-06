@@ -24,7 +24,8 @@ const {
     createProjectValidator,
     addMemberToProjectValidator
 } = require("../validators");
-const { AvailableUserRole, UserRoleEnum } = require("../utils/constants.js");
+
+const {AvailableUserRole, UserRoleEnum} = require("../utils/constants.js")
 //to auth
 router.use(verifyJWT)
 
