@@ -12,7 +12,7 @@ const getNotes = asyncHandler(async(req, res) => {
     const project = await Project.findById(projectId)
 
     if(!project){
-        throw new apiError(404, "project not found")
+        throw new apiError(404, "Project not found")
     }
 
     const notes = await ProjectNote.find({
@@ -34,7 +34,7 @@ const createNotes = asyncHandler(async(req, res) => {
     const project = await Project.findById(projectId);
     
     if(!project){
-        throw new apiError(404, "project not found")
+        throw new apiError(404, "Project not found")
     }
     
    const notes = await ProjectNote.create({
@@ -59,7 +59,7 @@ const getNotesById = asyncHandler(async(req, res) => {
     }).populate("createdBy", "username fullName avatar");
 
     if(!notes){
-        throw new apiError(404, "note not found")
+        throw new apiError(404, "Note not found")
     }
 
     return res
@@ -79,7 +79,7 @@ const updateNotes = asyncHandler(async(req, res) => {
     });
 
     if(!notes){
-        throw new apiError(404, "note not found")
+        throw new apiError(404, "Note not found")
     }
 
     const updateData  = {}
@@ -88,7 +88,7 @@ const updateNotes = asyncHandler(async(req, res) => {
         updateData .content = content
     }
 
-    const update = await ProjectNote.findByIdAndUpdate(
+    const updatedNote = await ProjectNote.findByIdAndUpdate(
         noteId,
         updateData ,
         {
@@ -96,11 +96,11 @@ const updateNotes = asyncHandler(async(req, res) => {
         }
     )
 
-    if(!update){
-        throw new apiError(400,"note not update")
+    if(!updatedNote){
+        throw new apiError(400,"Note was not updated")
     }
 
-    return res.status(200).json(new apiResponse(200,update, "note Updated successfully"))
+    return res.status(200).json(new apiResponse(200,updatedNote, "Note updated successfully"))
 });
 
 const deleteNotes = asyncHandler(async(req, res) => {
@@ -112,16 +112,16 @@ const deleteNotes = asyncHandler(async(req, res) => {
     });
 
     if(!note){
-       throw new apiError(404,"note not found")
+       throw new apiError(404,"Note not found")
     }
 
-    const deleteNote = await ProjectNote.findByIdAndDelete(noteId)
+    const deletedNote = await ProjectNote.findByIdAndDelete(noteId)
 
-    if(!deleteNote){
+    if(!deletedNote){
         throw new apiError(400, "Failed to delete note")
     }
 
-    return res.status(200).json(new apiResponse(200, deleteNote, "Note Deleted successfully"))
+    return res.status(200).json(new apiResponse(200, deletedNote, "Note Deleted successfully"))
 });
 
 module.exports = {
