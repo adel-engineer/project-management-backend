@@ -28,7 +28,7 @@ const generateAccessAndRefreshTokens = async (userId) =>{
 }
 
 const registerUser = asyncHandler(async (req, res) =>{
-    const {email, username, password, role} = req.body
+    const {email, username, password} = req.body
 
     //find a user
    const existedUser = await User.findOne({
@@ -72,10 +72,10 @@ const registerUser = asyncHandler(async (req, res) =>{
     }
 
     return res
-      .status(200)
+      .status(201)
       .json(
         new apiResponse(
-            200,
+            201,
             {user: createUser},
             "user registered!"
         )
@@ -84,7 +84,7 @@ const registerUser = asyncHandler(async (req, res) =>{
 });
 
 const login = asyncHandler(async (req,res) =>{
-    const {usekrname, password, email} = req.body
+    const {password, email} = req.body
 
     if(!email){
         throw new ApiError(400, "email is required!")
@@ -93,12 +93,12 @@ const login = asyncHandler(async (req,res) =>{
    const user = await User.findOne({email});
 
    if(!user){
-    throw new ApiError(400, "user does not exists");
+    throw new ApiError(401, "Unauthorized");
    }
 
    const ispasswordValid = await user.isPasswordCorrect(password);
    if(!ispasswordValid){
-    throw new ApiError(400, "Invalid password")
+    throw new ApiError(401, "Unauthorized")
    }
 
   const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
@@ -132,7 +132,7 @@ const logoutUser = asyncHandler(async (req, res) =>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $unset: { refreshToken:""}
+            $unset: { refereshToken:""}
         },
         {
             new: true
@@ -159,7 +159,6 @@ const logoutUser = asyncHandler(async (req, res) =>{
 
 const getCurrentUser = asyncHandler(async (req, res)=>{
 
-    console.log(req.user);
     return res
         .status(200)
         .json(
@@ -178,7 +177,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
         throw new ApiError(400, "verification token is required")
     }
 
-    let hashedToken = crypto
+    const hashedToken = crypto
         .createHash("sha256")
         .update(verificationToken)
         .digest("hex");
@@ -216,7 +215,7 @@ const resendEmailVerification = asyncHandler(async (req, res) =>{
     if(!user){
         throw new ApiError(
             404,
-            "usernot found",
+            "user not found",
             []
         )
     }
@@ -290,7 +289,7 @@ const refershToken = asyncHandler(async (req, res) =>{
         if(incomingRefreshToken !== user.refereshToken){
             throw new ApiError(
                 401,
-                "the token is expired",
+                "Invalid refresh token",
                 []
             )
         }
@@ -330,7 +329,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     if(!user){
         throw new ApiError(
             404,
-            "user not found",
+            "If the email exists, a password reset link has been sent",
             []
         )
     }
@@ -356,7 +355,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
             new apiResponse(
                 200,
                 {},
-                "password reset link sent to your email"
+                "If the email exists, a password reset link has been sent"
             )
         )
 
@@ -366,7 +365,7 @@ const resetForgotPassword = asyncHandler(async (req, res) => {
     const { resetToken } = req.params;
     const {newPassword} = req.body;
 
-    let hashedToken = crypto
+    const hashedToken = crypto
         .createHash("sha256")
         .update( resetToken )
         .digest("hex");
@@ -421,7 +420,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
         .json(
             new apiResponse(
                 200,
-                [],
+                {},
                 "Password has changed successfuly"
 
             )
