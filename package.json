@@ -6,7 +6,7 @@
     "management",
     "system"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "author": "Adel Shehab",
   "type": "commonjs",
   "main": "index.js",
