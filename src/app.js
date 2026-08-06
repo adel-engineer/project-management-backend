@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require("cors");   
 const app = express();
 const cookieParser = require('cookie-parser');
+const helmet = require("helmet");
+
 
 //middleware
 app.use(
@@ -16,6 +18,8 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
+app.use(helmet());
 
 
 
