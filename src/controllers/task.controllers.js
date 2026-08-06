@@ -1,4 +1,3 @@
-const User = require("../models/user.model.js");
 const {Project} = require("../models/project.model.js");
 const {Task} = require("../models/task.model.js");
 const {SubTask} = require("../models/subtask.model.js");
@@ -6,9 +5,7 @@ const apiResponse = require("../utils/api-response.js");
 const apiError = require("../utils/api-error.js");
 const asyncHandler = require("../utils/asyncHandler.js");
 const mongoose = require("mongoose");
-const {UserRoleEnum, AvailableUserRole} = require("../utils/constants.js");
-const { pipeline } = require("nodemailer/lib/xoauth2/index.js");
-const ApiError = require("../utils/api-error.js");
+const {AvailableTaskStatues} = require("../utils/constants.js");
 const ProjectMember = require("../models/projectmember.model.js");
 
 
@@ -18,7 +15,7 @@ const getTasks = asyncHandler(async(req, res) => {
    const project = await Project.findById(projectId);
 
    if(!project){
-     throw new apiError(404, "project not found")
+     throw new apiError(404, "Project not found")
    }
 
    const tasks = await Task.find({
@@ -26,7 +23,7 @@ const getTasks = asyncHandler(async(req, res) => {
    }).populate("assignedTo", "avatar username fullName")
 
     return res
-     .status(201)
+     .status(200)
      .json(
          new apiResponse(200, tasks, "Task fetched successfully")
      )
@@ -39,18 +36,34 @@ const creatTask = asyncHandler(async(req, res) => {
 
    const project = await Project.findById(projectId);
 
-   if(!project){
-    throw new apiError(404, "project not found")
+    if(!project){
+    throw new apiError(404, "Project not found")
    }
+
+   if(assignedTo){
+    const member = await ProjectMember.findOne({
+        user: new mongoose.Types.ObjectId(assignedTo),
+        project: new mongoose.Types.ObjectId(projectId),        
+    });
+    if (!member) {
+        throw new apiError(404, "Member is not part of this project");
+    };
+   };
+
+ 
 
    const files = req.files || []
    const attachements = files.map((file) => {
     return {
-        url: `${process.env.SERVER_URL}/images/${file.originalname}`,
-        MimeType: file.mimetype,
+        url: `${process.env.SERVER_URL}/images/${Date.now() + file.originalname}`,
+        mimeType: file.mimetype,
         size: file.size
     }
    });
+
+   if(!AvailableTaskStatues.includes(status)){
+    throw new apiError(400, "Invalid status")
+   }
 
    const task = await Task.create({
     title,
@@ -116,7 +129,7 @@ const getTaskById = asyncHandler(async(req, res) => {
                                     _id: 1,
                                     username: 1,
                                     fullName: 1,
-                                    avater: 1
+                                    avatar: 1
                                 }
                             }
                          ]
@@ -143,7 +156,7 @@ const getTaskById = asyncHandler(async(req, res) => {
     ]);
 
     if(!task || task.length === 0){
-        throw new ApiError(404, "task not found")
+        throw new apiError(404, "Task not found")
     }
 
     return res.status(200).json(new apiResponse(200, task[0], "task fetched successfully"))
@@ -152,23 +165,33 @@ const getTaskById = asyncHandler(async(req, res) => {
 
 const updateTask = asyncHandler(async(req, res) => {
     const {taskId} = req.params
-    const {title, description, assignedTo, status} = req.body
+    const {title, description, assignedTo, status} = req.body;
+    const updateTask = {}
+
 
     let task = await Task.findOne({
         _id: new mongoose.Types.ObjectId(taskId),
     })
  
     if(!task){
-        throw new apiError(404,"task not exict")
+        throw new apiError(404,"Task does not exist")
     }
 
-    let projectmember = await ProjectMember.findOne({
-        user: new mongoose.Types.ObjectId(assignedTo),
-        project: new mongoose.Types.ObjectId(task.project)
-    })
 
-    if(!projectmember){
-        throw new apiError(404, "the member is not allowed")
+    let projectMember
+
+    if (assignedTo) {
+        projectMember = await ProjectMember.findOne({
+            user: new mongoose.Types.ObjectId(assignedTo),
+            project: new mongoose.Types.ObjectId(task.project),
+        })
+
+        if(!projectMember){
+            throw new apiError(404, "Member is not part of this project");
+        }
+
+        updateTask.assignedTo = assignedTo;
+
     }
 
     if(status){
@@ -176,7 +199,6 @@ const updateTask = asyncHandler(async(req, res) => {
             throw new apiError(400, "Status is wrong")
         }
     }
-    const updateTask = {}
 
     if(title){
         updateTask.title = title
@@ -191,7 +213,7 @@ const updateTask = asyncHandler(async(req, res) => {
         updateTask.status = status
     }
 
-    const update = await Task.findByIdAndUpdate(
+    const updatedTask = await Task.findByIdAndUpdate(
         task._id,
         updateTask,
         {
@@ -199,11 +221,11 @@ const updateTask = asyncHandler(async(req, res) => {
         }
     )
 
-    if(!update){
-        throw new apiError(400,"tast not update")
+    if(!updatedTask){
+        throw new apiError(400,"Task was not updated")
     }
 
-    return res.status(200).json(new apiResponse(200,update, "Task Updated successfully"))
+    return res.status(200).json(new apiResponse(200,updatedTask, "Task updated successfully"))
     
 });
 
@@ -225,7 +247,7 @@ const deleteTask = asyncHandler(async(req, res) => {
         throw new apiError(400,"Task not deleted")
     }
 
-    return res.status(200).json(new apiResponse(200, deleteTask, "Task Deleted successfully"))
+    return res.status(200).json(new apiResponse(200, deleteTask, "Task deleted successfully"))
 });
 
 const createSubTask = asyncHandler(async(req, res) => {
@@ -238,7 +260,7 @@ const createSubTask = asyncHandler(async(req, res) => {
     });
 
     if(!task){
-        throw new apiError(404, "task not Found")
+        throw new apiError(404, "Task not found")
     };
 
     const subtask = await SubTask.create({
@@ -260,7 +282,7 @@ const updateSubTask = asyncHandler(async(req, res) => {
 
     const subtask = await SubTask.findById(subTaskId)
     if(!subtask){
-        throw new apiError(404, "subtask not found")
+        throw new apiError(404, "Subtask not found")
     }
 
     const task = await Task.findById(subtask.task)
@@ -290,7 +312,7 @@ const updateSubTask = asyncHandler(async(req, res) => {
         }
     )
 
-    return res.status(200).json(new apiResponse(200,update, "subtask Updated successfully"))
+    return res.status(200).json(new apiResponse(200,update, "Subtask updated successfully"))
 
 });
 
@@ -299,7 +321,7 @@ const deleteSubTask = asyncHandler(async(req, res) => {
 
     const subtask = await SubTask.findById(subTaskId)
     if(!subtask){
-        throw new apiError(404, "subtask not found")
+        throw new apiError(404, "Subtask not found")
     }
 
     const task = await Task.findById(subtask.task)
@@ -313,10 +335,10 @@ const deleteSubTask = asyncHandler(async(req, res) => {
 
     const deletedSubTask = await SubTask.findByIdAndDelete(subTaskId)
     if(!deletedSubTask){
-        throw new apiError(400, "sub task does not deleted")
+        throw new apiError(400, "Subtask was not deleted")
     }
 
-    return res.status(200).json(new apiResponse(200, deletedSubTask, "Subtask Deleted successfully"))
+    return res.status(200).json(new apiResponse(200, deletedSubTask, "Subtask deleted successfully"))
 
 });
 
