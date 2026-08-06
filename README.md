@@ -209,3 +209,273 @@ The primary objective of this project is to demonstrate production-ready backend
 - Request validation
 - Clean and maintainable code structure
 - Secure authentication and authorization workflows
+
+
+---
+
+# Project Structure
+
+```
+project-management-system-backend-api
+│
+├── public
+│   └── images
+│
+├── src
+│   ├── config
+│   ├── controllers
+│   ├── db
+│   ├── middleware
+│   ├── models
+│   ├── routes
+│   ├── utils
+│   ├── validators
+│   ├── app.js
+│   └── index.js
+│
+├── .env.example
+├── package.json
+└── README.md
+```
+
+## Folder Description
+
+| Folder | Description |
+|----------|-------------|
+| config | Application configuration files |
+| controllers | Business logic for API endpoints |
+| db | MongoDB connection setup |
+| middleware | Authentication, authorization, validation middleware |
+| models | Mongoose database models |
+| routes | API route definitions |
+| utils | Helper functions and reusable utilities |
+| validators | Request validation using Express Validator |
+| public/images | Uploaded images |
+
+---
+
+# Database Models
+
+The application is built around six main collections.
+
+### User
+
+Stores user account information.
+
+Responsibilities
+
+- Authentication
+- Profile Management
+- Email Verification
+- Password Recovery
+
+---
+
+### Project
+
+Represents a project created by a user.
+
+Responsibilities
+
+- Project Information
+- Owner
+- Team Collaboration
+
+---
+
+### Project Member
+
+Acts as a bridge between users and projects.
+
+Responsibilities
+
+- Team Membership
+- Role Management
+- Project Permissions
+
+Supported Roles
+
+- Admin
+- Project Admin
+- Member
+
+---
+
+### Task
+
+Represents a task that belongs to a project.
+
+Responsibilities
+
+- Task Assignment
+- Status Tracking
+- File Attachments
+
+Supported Status
+
+- Todo
+- In Progress
+- Done
+
+---
+
+### SubTask
+
+Represents smaller work items belonging to a task.
+
+Responsibilities
+
+- Completion Tracking
+- Task Breakdown
+
+---
+
+### Project Note
+
+Stores notes related to a project.
+
+Responsibilities
+
+- Meeting Notes
+- Documentation
+- Project Updates
+
+---
+
+# Database Relationships
+
+```
+User
+ │
+ ├──────────────┐
+ │              │
+ │          Project
+ │              │
+ │              ├──────────────┐
+ │              │              │
+ │              │          Project Member
+ │              │              │
+ │              │              │
+ │              │          User
+ │              │
+ │              ├─────────────── Task
+ │              │                  │
+ │              │                  │
+ │              │              SubTask
+ │              │
+ │              └─────────────── Notes
+```
+
+---
+
+# Authentication Flow
+
+```
+Register
+     │
+     ▼
+Email Verification
+     │
+     ▼
+Login
+     │
+     ▼
+Generate Access Token
+Generate Refresh Token
+     │
+     ▼
+Access Protected Routes
+     │
+     ▼
+Refresh Token (When Expired)
+```
+
+---
+
+# Authorization (RBAC)
+
+The application implements Role-Based Access Control to restrict access to protected resources.
+
+| Role | Permissions |
+|------|-------------|
+| Admin | Full access to project resources |
+| Project Admin | Manage project members, tasks, and notes |
+| Member | Access assigned project resources |
+
+Authorization is validated before protected endpoints are executed through reusable middleware.
+
+---
+
+# Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/adel-engineer/project-management-backend.git
+```
+
+Move into the project directory
+
+```bash
+cd project-management-backend
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+# Environment Variables
+
+Create a `.env` file in the root directory.
+
+```env
+MONGO_URI=
+
+PORT=
+
+CORS_ORIGIN=
+
+ACCESS_TOKEN_SECRET=
+ACCESS_TOKEN_EXPIRY=
+
+REFRESH_TOKEN_SECRET=
+REFRESH_TOKEN_EXPIRY=
+
+MAILTRAP_SMTP_HOST=
+MAILTRAP_SMTP_POST=
+MAILTRAP_SMTP_USER=
+MAILTRAP_SMTP_PASS=
+
+FORGET_PASSWORD_URL=
+```
+
+---
+
+# Running the Application
+
+Development Mode
+
+```bash
+npm run dev
+```
+
+Production Mode
+
+```bash
+npm start
+```
+
+---
+
+# API Base URL
+
+```
+http://localhost:3000/api/v1
+```
+
+All protected routes require a valid JWT Access Token.
+
